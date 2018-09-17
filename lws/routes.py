@@ -1,6 +1,19 @@
+from flask import render_template
+
 from lws import lws_app
 
 @lws_app.route('/')
 @lws_app.route('/index')
 def index():
-    return "Hello, Welcome to Life Web Service."
+    user = {'username': 'Kehang'}
+    posts = [
+        {
+            'author': {'username': 'John'},
+            'body': 'Beautiful day in Portland!'
+        },
+        {
+            'author': {'username': 'Susan'},
+            'body': 'The Avengers movie was so cool!'
+        }
+    ]
+    return render_template('index.html', title='Home', user=user, posts=posts)
