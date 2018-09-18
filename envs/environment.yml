@@ -6,3 +6,5 @@ dependencies:
   - python=3
   - flask
   - flask-wtf
+  - flask-sqlalchemy
+  - flask-migrate
