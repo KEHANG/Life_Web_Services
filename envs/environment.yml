@@ -10,3 +10,4 @@ dependencies:
   - flask-migrate
   - flask-login
   - pymysql
+  - nose
