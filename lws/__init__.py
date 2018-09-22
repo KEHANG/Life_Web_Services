@@ -11,4 +11,4 @@ migrate = Migrate(lws_app, lws_db)
 login = LoginManager(lws_app)
 login.login_view = 'login'
 
-from lws import routes, models
+from lws import routes, models, errors
