@@ -13,6 +13,9 @@ class User(UserMixin, lws_db.Model):
     password_hash = lws_db.Column(lws_db.String(128))
     posts = lws_db.relationship('Post', backref='author', lazy='dynamic')
 
+    about_me = lws_db.Column(lws_db.String(140))
+    last_seen = lws_db.Column(lws_db.DateTime, default=datetime.utcnow)
+
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -27,6 +30,8 @@ class User(UserMixin, lws_db.Model):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
             digest, size)
+
+
 
 class Post(lws_db.Model):
     id = lws_db.Column(lws_db.Integer, primary_key=True)
