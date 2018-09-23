@@ -1,14 +1,14 @@
 <html>
     <head>
       {% if title %}
-      <title>{{ title }} - Microblog</title>
+      <title>{{ title }} - Life Web Service</title>
       {% else %}
-      <title>Welcome to Microblog</title>
+      <title>Welcome to Life Web Service</title>
       {% endif %}
     </head>
     <body>
         <div>
-          Microblog: 
+          Life Web Service: 
           <a href="{{ url_for('index') }}">Home</a>
           <a href="{{ url_for('explore') }}">Explore</a>
           {% if current_user.is_anonymous %}
