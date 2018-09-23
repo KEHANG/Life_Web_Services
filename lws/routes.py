@@ -114,6 +114,23 @@ def unfollow(username):
     flash('You are not following {}.'.format(username))
     return redirect(url_for('user', username=username))
 
+@lws_app.route('/explore')
+@login_required
+def explore():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, 
+            lws_app.config['POSTS_PER_PAGE'], False)
+    next_url = None
+    if posts.has_next:
+        next_url = url_for('explore', page=posts.next_num)
+    prev_url = None
+    if posts.has_prev:
+        prev_url = url_for('explore', page=posts.prev_num)
+
+    return render_template('explore.html', title='Explore', 
+                           posts=posts.items, next_url=next_url,
+                           prev_url=prev_url)
+
 @lws_app.before_request
 def before_request():
     if current_user.is_authenticated:
