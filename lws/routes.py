@@ -5,7 +5,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from lws import lws_app, lws_db
 from lws.models import User, Post
-from lws.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
+from lws.email import send_password_reset_email
+from lws.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
 
 @lws_app.route('/')
 @lws_app.route('/index', methods=['GET', 'POST'])
@@ -149,6 +150,22 @@ def explore():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+@lws_app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter_by(email=email).first()
+        if user:
+            send_password_reset_email(user)
+            flash('Check your email for the instructions to reset your password')
+            return redirect(url_for('login'))
+        else:
+            flash('Your email is not registered in the system')
+    return render_template('reset_password_request.html', 
+                           title='Reset Password', form=form)
 @lws_app.before_request
 def before_request():
     if current_user.is_authenticated:
