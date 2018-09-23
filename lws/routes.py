@@ -5,12 +5,19 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from lws import lws_app, lws_db
 from lws.models import User, Post
-from lws.forms import LoginForm, RegistrationForm, EditProfileForm
+from lws.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
 
 @lws_app.route('/')
-@lws_app.route('/index')
+@lws_app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        lws_db.session.add(post)
+        lws_db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('index'))
     posts = Post.query.all()
     return render_template('index.html', title='Home', posts=posts)
 
