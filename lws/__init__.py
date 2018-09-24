@@ -5,6 +5,7 @@ from flask_mail import Mail
 from lws.config import Config
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
@@ -17,9 +18,7 @@ migrate = Migrate(lws_app, lws_db)
 login = LoginManager(lws_app)
 login.login_view = 'login'
 mail = Mail(lws_app)
-
-
-from lws import routes, models, errors
+boostrap = Bootstrap(lws_app)
 
 if not lws_app.debug:
     if lws_app.config['MAIL_SERVER']:
@@ -48,3 +47,7 @@ if not lws_app.debug:
 
     lws_app.logger.setLevel(logging.INFO)
     lws_app.logger.info('Life Web Services startup')
+
+
+from lws import routes, models, errors
+

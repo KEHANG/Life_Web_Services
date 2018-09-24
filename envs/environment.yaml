@@ -10,6 +10,7 @@ dependencies:
   - flask-migrate
   - flask-login
   - flask-mail
+  - flask-bootstrap
   - pymysql
   - pyjwt
   - nose
