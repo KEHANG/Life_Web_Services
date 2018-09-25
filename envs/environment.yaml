@@ -11,6 +11,7 @@ dependencies:
   - flask-login
   - flask-mail
   - flask-bootstrap
+  - flask-moment
   - pymysql
   - pyjwt
   - nose
