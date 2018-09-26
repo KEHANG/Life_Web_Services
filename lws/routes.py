@@ -8,7 +8,7 @@ from lws.models import User, Post
 from lws.email import send_password_reset_email
 from lws.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
 
-@lws_app.route('/')
+@lws_app.route('/', methods=['GET', 'POST'])
 @lws_app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
