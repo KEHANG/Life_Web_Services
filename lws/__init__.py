@@ -1,14 +1,16 @@
 import os
 import logging
-from flask import Flask
 from flask_mail import Mail
-from lws.config import Config
+from flask import Flask, request
+from flask_babel import Babel
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_moment import Moment
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import SMTPHandler, RotatingFileHandler
+
+from lws.config import Config
 
 lws_app = Flask(__name__)
 lws_app.config.from_object(Config)
@@ -22,6 +24,8 @@ mail = Mail(lws_app)
 boostrap = Bootstrap(lws_app)
 
 moment = Moment(lws_app)
+
+babel = Babel(lws_app)
 
 if not lws_app.debug:
     if lws_app.config['MAIL_SERVER']:
@@ -53,4 +57,8 @@ if not lws_app.debug:
 
 
 from lws import routes, models, errors
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(lws_app.config['LANGUAGES'])
 
