@@ -83,6 +83,7 @@ class Post(lws_db.Model):
     body = lws_db.Column(lws_db.String(140))
     timestamp = lws_db.Column(lws_db.DateTime, index=True, default=datetime.utcnow)
     user_id = lws_db.Column(lws_db.Integer, lws_db.ForeignKey('user.id'))
+    language = lws_db.Column(lws_db.String(5))
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
