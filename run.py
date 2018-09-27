@@ -1,4 +1,4 @@
-from lws import lws_app, lws_db
+from lws import cli, lws_app, lws_db
 from lws.models import User, Post
 
 @lws_app.shell_context_processor
