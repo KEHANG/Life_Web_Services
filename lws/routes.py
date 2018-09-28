@@ -1,4 +1,5 @@
 from flask import g
+from flask import jsonify
 from datetime import datetime
 from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
@@ -7,6 +8,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from lws import lws_app, lws_db
 from lws.models import User, Post
+from lws.translate import translate
 from lws.email import send_password_reset_email
 from lws.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
 
@@ -183,6 +185,13 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+@lws_app.route('/translate', methods=['POST'])
+@login_required
+def translate_text():
+    return jsonify({'text': translate(request.form['text'],
+                                      request.form['source_language'],
+                                      request.form['dest_language'])})
 
 @lws_app.before_request
 def before_request():
