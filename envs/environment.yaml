@@ -16,3 +16,6 @@ dependencies:
   - pymysql
   - pyjwt
   - nose
+  - requests
+  - pip:
+    - guess_language-spirit
