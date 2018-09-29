@@ -24,8 +24,11 @@ mail = Mail(lws_app)
 boostrap = Bootstrap(lws_app)
 
 moment = Moment(lws_app)
-
 babel = Babel(lws_app)
+
+# register blueprints
+from lws.errors import bp as errors_bp
+lws_app.register_blueprint(errors_bp)
 
 if not lws_app.debug:
     if lws_app.config['MAIL_SERVER']:
@@ -55,10 +58,9 @@ if not lws_app.debug:
     lws_app.logger.setLevel(logging.INFO)
     lws_app.logger.info('Life Web Services startup')
 
-
-from lws import routes, models, errors
-
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(lws_app.config['LANGUAGES'])
+
+from lws import routes, models
 
