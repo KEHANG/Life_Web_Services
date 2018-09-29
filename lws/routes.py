@@ -1,17 +1,15 @@
 from flask import g
 from flask import jsonify
 from datetime import datetime
-from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
 from guess_language import guess_language
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import current_user, login_required
 
 from lws import lws_app, lws_db
 from lws.models import User, Post
 from lws.translate import translate
-from lws.email import send_password_reset_email
-from lws.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
+from lws.forms import EditProfileForm, PostForm
 
 @lws_app.route('/', methods=['GET', 'POST'])
 @lws_app.route('/index', methods=['GET', 'POST'])
@@ -42,43 +40,6 @@ def index():
     return render_template('index.html', title='Home', form=form, 
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
-
-@lws_app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash(_('Invalid username or password'))
-            return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
-        return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
-
-@lws_app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-@lws_app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        lws_db.session.add(user)
-        lws_db.session.commit()
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
 
 @lws_app.route('/user/<username>')
 @login_required
@@ -158,38 +119,6 @@ def explore():
     return render_template('explore.html', title='Explore', 
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
-
-@lws_app.route('/reset_password_request', methods=['GET', 'POST'])
-def reset_password_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        email = form.email.data
-        user = User.query.filter_by(email=email).first()
-        if user:
-            send_password_reset_email(user)
-            flash('Check your email for the instructions to reset your password')
-            return redirect(url_for('login'))
-        else:
-            flash(_('Your email is not registered in the system'))
-    return render_template('reset_password_request.html', 
-                           title='Reset Password', form=form)
-
-@lws_app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    user = User.verify_reset_password_token(token)
-    if not user:
-        return redirect(url_for('index'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user.set_password(form.password.data)
-        lws_db.session.commit()
-        flash('Your password has been reset.')
-        return redirect(url_for('login'))
-    return render_template('reset_password.html', form=form)
 
 @lws_app.route('/translate', methods=['POST'])
 @login_required

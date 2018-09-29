@@ -19,7 +19,7 @@ lws_db = SQLAlchemy(lws_app)
 migrate = Migrate(lws_app, lws_db)
 
 login = LoginManager(lws_app)
-login.login_view = 'login'
+login.login_view = 'auth.login'
 mail = Mail(lws_app)
 boostrap = Bootstrap(lws_app)
 
@@ -28,7 +28,9 @@ babel = Babel(lws_app)
 
 # register blueprints
 from lws.errors import bp as errors_bp
+from lws.auth import bp as auth_bp
 lws_app.register_blueprint(errors_bp)
+lws_app.register_blueprint(auth_bp, url_prefix='/auth')
 
 if not lws_app.debug:
     if lws_app.config['MAIL_SERVER']:
