@@ -27,8 +27,11 @@ moment = Moment(lws_app)
 babel = Babel(lws_app)
 
 # register blueprints
+from lws.main import bp as main_bp
 from lws.errors import bp as errors_bp
 from lws.auth import bp as auth_bp
+
+lws_app.register_blueprint(main_bp)
 lws_app.register_blueprint(errors_bp)
 lws_app.register_blueprint(auth_bp, url_prefix='/auth')
 
@@ -64,5 +67,5 @@ if not lws_app.debug:
 def get_locale():
     return request.accept_languages.best_match(lws_app.config['LANGUAGES'])
 
-from lws import routes, models
+from lws import models
 

@@ -9,10 +9,11 @@ from flask_login import current_user, login_required
 from lws import lws_app, lws_db
 from lws.models import User, Post
 from lws.translate import translate
-from lws.forms import EditProfileForm, PostForm
+from lws.main import bp
+from lws.main.forms import EditProfileForm, PostForm
 
-@lws_app.route('/', methods=['GET', 'POST'])
-@lws_app.route('/index', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     form = PostForm()
@@ -25,23 +26,23 @@ def index():
         lws_db.session.add(post)
         lws_db.session.commit()
         flash(_('Your post is now live!'))
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page, 
             lws_app.config['POSTS_PER_PAGE'], False)
 
     next_url = None
     if posts.has_next:
-        next_url = url_for('index', page=posts.next_num)
+        next_url = url_for('main.index', page=posts.next_num)
     prev_url = None
     if posts.has_prev:
-        prev_url = url_for('index', page=posts.prev_num)
+        prev_url = url_for('main.index', page=posts.prev_num)
 
     return render_template('index.html', title='Home', form=form, 
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
-@lws_app.route('/user/<username>')
+@bp.route('/user/<username>')
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
@@ -50,14 +51,14 @@ def user(username):
             lws_app.config['POSTS_PER_PAGE'], False)
     next_url = None
     if posts.has_next:
-        next_url = url_for('user', username=user.username, page=posts.next_num)
+        next_url = url_for('main.user', username=user.username, page=posts.next_num)
     prev_url = None
     if posts.has_prev:
-        prev_url = url_for('user', username=user.username, page=posts.prev_num)
+        prev_url = url_for('main.user', username=user.username, page=posts.prev_num)
     return render_template('user.html', user=user, 
                            posts=posts.items, next_url=next_url, prev_url=prev_url)
 
-@lws_app.route('/edit_profile', methods=['GET', 'POST'])
+@bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
@@ -66,44 +67,44 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         lws_db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('edit_profile'))
+        return redirect(url_for('main.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
 
-@lws_app.route('/follow/<username>')
+@bp.route('/follow/<username>')
 @login_required
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         flash('User {} not found.'.format(username))
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     if user == current_user:
         flash('You cannot follow yourself!')
-        return redirect(url_for('user', username=username))
+        return redirect(url_for('main.user', username=username))
     current_user.follow(user)
     lws_db.session.commit()
     flash('You are following {}!'.format(username))
-    return redirect(url_for('user', username=username))
+    return redirect(url_for('main.user', username=username))
 
-@lws_app.route('/unfollow/<username>')
+@bp.route('/unfollow/<username>')
 @login_required
 def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         flash('User {} not found.'.format(username))
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     if user == current_user:
         flash('You cannot unfollow yourself!')
-        return redirect(url_for('user', username=username))
+        return redirect(url_for('main.user', username=username))
     current_user.unfollow(user)
     lws_db.session.commit()
     flash('You are not following {}.'.format(username))
-    return redirect(url_for('user', username=username))
+    return redirect(url_for('main.user', username=username))
 
-@lws_app.route('/explore')
+@bp.route('/explore')
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
@@ -111,16 +112,16 @@ def explore():
             lws_app.config['POSTS_PER_PAGE'], False)
     next_url = None
     if posts.has_next:
-        next_url = url_for('explore', page=posts.next_num)
+        next_url = url_for('main.explore', page=posts.next_num)
     prev_url = None
     if posts.has_prev:
-        prev_url = url_for('explore', page=posts.prev_num)
+        prev_url = url_for('main.explore', page=posts.prev_num)
 
     return render_template('explore.html', title='Explore', 
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
-@lws_app.route('/translate', methods=['POST'])
+@bp.route('/translate', methods=['POST'])
 @login_required
 def translate_text():
     return jsonify({'text': translate(request.form['text'],
