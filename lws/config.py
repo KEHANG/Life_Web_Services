@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env_vars'))
 
 class Config(object):
     
@@ -12,10 +16,8 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    ADMINS = ['kehanghan@gmail.com']
+    ADMINS = [os.environ.get('ADMIN')]
 
     POSTS_PER_PAGE = 25
-
     LANGUAGES = ['en', 'zh']
-
     MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')

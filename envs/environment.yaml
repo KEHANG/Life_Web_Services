@@ -4,6 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3
+  - dotenv
   - flask
   - flask-wtf
   - flask-sqlalchemy
