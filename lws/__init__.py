@@ -25,7 +25,7 @@ babel = Babel()
 
 def create_app(config_class=Config):
     lws_app = Flask(__name__)
-    lws_app.config.from_object(Config)
+    lws_app.config.from_object(config_class)
 
     lws_db.init_app(lws_app)
     migrate.init_app(lws_app, lws_db)
