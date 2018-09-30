@@ -1,12 +1,13 @@
 from flask import g
 from flask import jsonify
+from flask import current_app
 from datetime import datetime
 from flask_babel import _, get_locale
 from guess_language import guess_language
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 
-from lws import lws_app, lws_db
+from lws import lws_db
 from lws.models import User, Post
 from lws.translate import translate
 from lws.main import bp
@@ -29,7 +30,7 @@ def index():
         return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page, 
-            lws_app.config['POSTS_PER_PAGE'], False)
+            current_app.config['POSTS_PER_PAGE'], False)
 
     next_url = None
     if posts.has_next:
@@ -48,7 +49,7 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(page, 
-            lws_app.config['POSTS_PER_PAGE'], False)
+            current_app.config['POSTS_PER_PAGE'], False)
     next_url = None
     if posts.has_next:
         next_url = url_for('main.user', username=user.username, page=posts.next_num)
@@ -109,7 +110,7 @@ def unfollow(username):
 def explore():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, 
-            lws_app.config['POSTS_PER_PAGE'], False)
+            current_app.config['POSTS_PER_PAGE'], False)
     next_url = None
     if posts.has_next:
         next_url = url_for('main.explore', page=posts.next_num)
@@ -128,7 +129,7 @@ def translate_text():
                                       request.form['source_language'],
                                       request.form['dest_language'])})
 
-@lws_app.before_request
+@bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()

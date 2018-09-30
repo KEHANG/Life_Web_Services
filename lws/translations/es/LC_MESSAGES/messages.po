@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-09-27 06:06-0400\n"
+"POT-Creation-Date: 2018-09-30 11:36-0400\n"
 "PO-Revision-Date: 2018-09-27 06:00-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -18,15 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: lws/routes.py:22
-msgid "Your post is now live!"
-msgstr "¡Tu artículo ha sido publicado!"
+#: lws/__init__.py:20
+msgid "Please log in to access this page."
+msgstr "Por favor inicie sesión para acceder a esta página."
 
-#: lws/routes.py:48
+#: lws/translate.py:8
+msgid "Error: the translation service is not configured."
+msgstr "Error: el servicio de traducción no está configurado."
+
+#: lws/translate.py:15
+msgid "Error: the translation service failed."
+msgstr "Error: el servicio de traducción falló."
+
+#: lws/auth/routes.py:21
 msgid "Invalid username or password"
 msgstr "Nombre de usuario o contraseña inválidos"
 
-#: lws/routes.py:168
+#: lws/auth/routes.py:62
 msgid "Your email is not registered in the system"
 msgstr "Busca en tu email las instrucciones para crear una nueva contraseña"
+
+#: lws/main/routes.py:29
+msgid "Your post is now live!"
+msgstr "¡Tu artículo ha sido publicado!"
+
+#: lws/templates/_post.html:22
+msgid "Translate"
+msgstr "Traducir"
+
+#: lws/templates/base.html:72
+msgid "Error: Could not contact server."
+msgstr "Error: no se pudo contactar al servidor."
 

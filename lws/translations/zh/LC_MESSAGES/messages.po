@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-09-27 06:06-0400\n"
+"POT-Creation-Date: 2018-09-30 11:36-0400\n"
 "PO-Revision-Date: 2018-09-26 07:02-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -18,15 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: lws/routes.py:22
-msgid "Your post is now live!"
-msgstr "你的状态已经发布！"
+#: lws/__init__.py:20
+msgid "Please log in to access this page."
+msgstr "请登录后再访问。"
 
-#: lws/routes.py:48
+#: lws/translate.py:8
+msgid "Error: the translation service is not configured."
+msgstr "错误：翻译功能尚未开放。"
+
+#: lws/translate.py:15
+msgid "Error: the translation service failed."
+msgstr "错误：翻译功能失败。"
+
+#: lws/auth/routes.py:21
 msgid "Invalid username or password"
 msgstr "用户名或密码不正确"
 
-#: lws/routes.py:168
+#: lws/auth/routes.py:62
 msgid "Your email is not registered in the system"
 msgstr "你的邮箱不在系统中"
+
+#: lws/main/routes.py:29
+msgid "Your post is now live!"
+msgstr "你的状态已经发布！"
+
+#: lws/templates/_post.html:22
+msgid "Translate"
+msgstr "翻译"
+
+#: lws/templates/base.html:72
+msgid "Error: Could not contact server."
+msgstr "错误：无法连接服务器。"
 
