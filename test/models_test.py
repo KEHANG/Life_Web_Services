@@ -1,17 +1,25 @@
 import unittest
 from datetime import datetime, timedelta
 
-from lws import lws_app, lws_db
+from lws.config import Config
 from lws.models import User, Post
+from lws import lws_db, create_app
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
 class UserModelCase(unittest.TestCase):
     def setUp(self):
-        lws_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
         lws_db.create_all()
 
     def tearDown(self):
         lws_db.session.remove()
         lws_db.drop_all()
+        self.app_context.pop()
 
     def test_password_hashing(self):
         u = User(username='susan')
