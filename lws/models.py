@@ -8,11 +8,53 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from lws import login
 from lws import lws_db
+from lws.search import add_to_index, remove_from_index, query_index
 
 followers = lws_db.Table('followers',
     lws_db.Column('follower_id', lws_db.Integer, lws_db.ForeignKey('user.id')),
     lws_db.Column('followed_id', lws_db.Integer, lws_db.ForeignKey('user.id'))
 )
+
+class SearchableMixin(object):
+    @classmethod
+    def search(cls, expression, page, per_page):
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:
+            return cls.query.filter_by(id=0), 0
+        when = []
+        for i in range(len(ids)):
+            when.append((ids[i], i))
+        return cls.query.filter(cls.id.in_(ids)).order_by(
+            lws_db.case(when, value=cls.id)), total
+
+    @classmethod
+    def before_commit(cls, session):
+        session._changes = {
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
+
+    @classmethod
+    def after_commit(cls, session):
+        for obj in session._changes['add']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['update']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['delete']:
+            if isinstance(obj, SearchableMixin):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        for obj in cls.query:
+            add_to_index(cls.__tablename__, obj)
+
+lws_db.event.listen(lws_db.session, 'before_commit', SearchableMixin.before_commit)
+lws_db.event.listen(lws_db.session, 'after_commit', SearchableMixin.after_commit)
 
 class User(UserMixin, lws_db.Model):
     id = lws_db.Column(lws_db.Integer, primary_key=True)
@@ -79,7 +121,9 @@ class User(UserMixin, lws_db.Model):
         return User.query.get(id)
 
 
-class Post(lws_db.Model):
+class Post(SearchableMixin, lws_db.Model):
+    __searchable__ = ['body']
+
     id = lws_db.Column(lws_db.Integer, primary_key=True)
     body = lws_db.Column(lws_db.String(140))
     timestamp = lws_db.Column(lws_db.DateTime, index=True, default=datetime.utcnow)

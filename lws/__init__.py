@@ -7,6 +7,7 @@ from flask_login import LoginManager
 from flask_moment import Moment
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from elasticsearch import Elasticsearch
 from flask import Flask, request, current_app
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
@@ -34,6 +35,10 @@ def create_app(config_class=Config):
     bootstrap.init_app(lws_app)
     moment.init_app(lws_app)
     babel.init_app(lws_app)
+
+    lws_app.elasticsearch = Elasticsearch([lws_app.config['ELASTICSEARCH_URL']]) \
+    if lws_app.config['ELASTICSEARCH_URL'] else None
+
 
     # register blueprints
     from lws.main import bp as main_bp
