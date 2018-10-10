@@ -15,6 +15,7 @@ dependencies:
   - flask-bootstrap
   - flask-moment
   - flask-babel
+  - gunicorn
   - pymysql
   - pyjwt
   - nose
