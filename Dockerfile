@@ -18,11 +18,11 @@ RUN conda env create -f envs/environment.yaml
 # install application
 COPY lws lws
 COPY migrations migrations
-COPY run.py docker_boot.sh ./
-RUN chmod +x docker_boot.sh
+COPY run.py launch_dk.sh ./
+RUN chmod +x launch_dk.sh
 
 # launch application
 RUN chown -R lws_user:lws_user ./
 USER lws_user
 EXPOSE 5000
-ENTRYPOINT ["./docker_boot.sh"]
+ENTRYPOINT ["./launch_dk.sh"]
