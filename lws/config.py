@@ -8,7 +8,8 @@ class Config(object):
     
     SECRET_KEY = os.environ.get('LWS_SECRET_KEY')
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('LWS_DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('LWS_DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'lws_db.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
