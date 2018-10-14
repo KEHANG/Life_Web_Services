@@ -3,7 +3,7 @@
 
 # Compiled Python modules
 *.pyc
-lws/.env_vars
+.env_vars
 
 logs/*
 dev_test/*
