@@ -6,4 +6,5 @@
 .env_vars
 
 logs/*
+deploy/*
 dev_test/*
