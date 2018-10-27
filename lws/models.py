@@ -15,6 +15,11 @@ followers = lws_db.Table('followers',
     lws_db.Column('followed_id', lws_db.Integer, lws_db.ForeignKey('user.id'))
 )
 
+ingredients = lws_db.Table('ingredients',
+    lws_db.Column('dish_id', lws_db.Integer, lws_db.ForeignKey('dish.id')),
+    lws_db.Column('ingredient_id', lws_db.Integer, lws_db.ForeignKey('ingredient.id'))
+)
+
 class SearchableMixin(object):
     @classmethod
     def search(cls, expression, page, per_page):
@@ -132,6 +137,24 @@ class Post(SearchableMixin, lws_db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+class Dish(lws_db.Model):
+
+    id = lws_db.Column(lws_db.Integer, primary_key=True)
+    name = lws_db.Column(lws_db.String(140))
+    ingredients = lws_db.relationship('Ingredient', secondary=ingredients, lazy='dynamic',
+                                      backref=lws_db.backref('dishes', lazy='dynamic'))
+
+    def __repr__(self):
+        return '<Dish {}>'.format(self.name)
+
+class Ingredient(lws_db.Model):
+
+    id = lws_db.Column(lws_db.Integer, primary_key=True)
+    name = lws_db.Column(lws_db.String(140))
+
+    def __repr__(self):
+        return '<Ingredient {}>'.format(self.name)
 
 @login.user_loader
 def load_user(id):
