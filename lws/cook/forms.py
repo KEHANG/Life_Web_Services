@@ -9,6 +9,6 @@ class IngredientForm(FlaskForm):
     submit = SubmitField('Submit')
 
     def validate_ingredient_name(self, ingredient_name):
-        user = Ingredient.query.filter_by(name=ingredient_name.data).first()
-        if user is not None:
+        ingredient = Ingredient.query.filter_by(name=ingredient_name.data).first()
+        if ingredient is not None:
             raise ValidationError('{0} is already in the system.'.format(ingredient_name.data))
