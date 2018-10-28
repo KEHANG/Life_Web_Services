@@ -1,3 +1,4 @@
+from flask import jsonify
 from flask_login import login_required
 from flask import flash, redirect, url_for, render_template, request
 
@@ -78,3 +79,12 @@ def add_dish():
                             dishes=dishes.items,
                             next_url=next_url,
                             prev_url=prev_url)
+
+@bp.route('/ingredients')
+@login_required
+def ingredients():
+    ingredients = Ingredient.query.all()
+    ingredient_names = [i.name for i in ingredients]
+    return jsonify(ingredient_names)
+
+

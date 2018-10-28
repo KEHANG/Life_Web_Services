@@ -23,3 +23,28 @@
         </ul>
     </nav>
 {% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <link href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
+    <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
+    <script>
+        $(document).ready(function(){
+        var ingredients=[];
+
+        function load_ingredients(){
+            $.getJSON('/cook/ingredients', function(data, status, xhr){
+                for (var i = 0; i < data.length; i++ ) {
+                    ingredients.push(data[i]);
+                }
+            });
+        };
+
+        load_ingredients();
+
+        $('#ingredient_name').autocomplete({
+            source: ingredients, 
+            });
+        }); 
+    </script>
+{% endblock %}
