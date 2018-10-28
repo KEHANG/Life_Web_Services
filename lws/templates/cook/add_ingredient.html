@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "cook/cook_base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
@@ -26,9 +26,6 @@
 
 {% block scripts %}
     {{ super() }}
-    <link href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
-    <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
-    <script src="{{ url_for('static', filename='lws.js') }}" ></script>
     <script>
         $(document).ready(function(){
         ingredients_api_endpoint = "{{ url_for('cook.ingredients') }}";
