@@ -87,4 +87,11 @@ def ingredients():
     ingredient_names = [i.name for i in ingredients]
     return jsonify(ingredient_names)
 
+@bp.route('/dishes')
+@login_required
+def dishes():
+    dishes = Dish.query.all()
+    dish_names = [i.name for i in dishes]
+    return jsonify(dish_names)
+
 
