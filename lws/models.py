@@ -148,6 +148,18 @@ class Dish(lws_db.Model):
     def __repr__(self):
         return '<Dish {}>'.format(self.name)
 
+    def add_ingredient(self, ingredient):
+        if not self.has_ingredient(ingredient):
+            self.ingredients.append(ingredient)
+
+    def remove_ingredient(self, ingredient):
+        if self.has_ingredient(ingredient):
+            self.ingredients.remove(ingredient)
+
+    def has_ingredient(self, ingredient):
+        return self.ingredients.filter(
+            ingredients.c.ingredient_id == ingredient.id).count() > 0
+
 class Ingredient(lws_db.Model):
 
     id = lws_db.Column(lws_db.Integer, primary_key=True)
