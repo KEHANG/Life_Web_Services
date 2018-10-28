@@ -38,41 +38,19 @@
     {{ super() }}
     <link href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
     <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
+    <script src="{{ url_for('static', filename='lws.js') }}" ></script>
     <script>
         $(document).ready(function(){
-        var ingredients=[];
-        var dishes=[];
         ingredients_api_endpoint = "{{ url_for('cook.ingredients') }}";
         dishes_api_endpoint = "{{ url_for('cook.dishes') }}";
 
-        function load_ingredients(ingredients_api_endpoint){
-            $.getJSON(ingredients_api_endpoint, function(data, status, xhr){
-                for (var i = 0; i < data.length; i++ ) {
-                    ingredients.push(data[i]);
-                }
-            });
-        };
-
-        function load_dishes(dishes_api_endpoint){
-            $.getJSON(dishes_api_endpoint, function(data, status, xhr){
-                for (var i = 0; i < data.length; i++ ) {
-                    dishes.push(data[i]);
-                }
-            });
-        };
-
-        load_ingredients(ingredients_api_endpoint);
-        load_dishes(dishes_api_endpoint);
-
         $("input[id^='ingredients-']").autocomplete({
-            source: ingredients,
+            source: load_items(ingredients_api_endpoint),
             });
         $("input[id='dish_name']" ).autocomplete({
-            source: dishes, 
+            source: load_items(dishes_api_endpoint), 
             });
-
         });
-
 
     </script>
 {% endblock %}
