@@ -31,18 +31,19 @@
     <script>
         $(document).ready(function(){
         var ingredients=[];
+        ingredients_api_endpoint = "{{ url_for('cook.ingredients') }}";
 
-        function load_ingredients(){
-            $.getJSON('/cook/ingredients', function(data, status, xhr){
+        function load_ingredients(ingredients_api_endpoint){
+            $.getJSON(ingredients_api_endpoint, function(data, status, xhr){
                 for (var i = 0; i < data.length; i++ ) {
                     ingredients.push(data[i]);
                 }
             });
         };
 
-        load_ingredients();
+        load_ingredients(ingredients_api_endpoint);
 
-        $('#ingredient_name').autocomplete({
+        $("input[id='ingredient_name']" ).autocomplete({
             source: ingredients, 
             });
         }); 
