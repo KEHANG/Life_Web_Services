@@ -20,6 +20,11 @@ ingredients = lws_db.Table('ingredients',
     lws_db.Column('ingredient_id', lws_db.Integer, lws_db.ForeignKey('ingredient.id'))
 )
 
+menus = lws_db.Table('menus',
+    lws_db.Column('menu_id', lws_db.Integer, lws_db.ForeignKey('menu.id')),
+    lws_db.Column('dish_id', lws_db.Integer, lws_db.ForeignKey('dish.id'))
+)
+
 class SearchableMixin(object):
     @classmethod
     def search(cls, expression, page, per_page):
@@ -137,6 +142,29 @@ class Post(SearchableMixin, lws_db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+class Menu(lws_db.Model):
+
+    id = lws_db.Column(lws_db.Integer, primary_key=True)
+    timestamp = lws_db.Column(lws_db.DateTime, index=True, default=datetime.utcnow)
+    confirmed = lws_db.Column(lws_db.Boolean, default=False)
+    dishes = lws_db.relationship('Dish', secondary=menus, lazy='dynamic',
+                                 backref=lws_db.backref('menus', lazy='dynamic'))
+
+    def __repr__(self):
+        return '<Menu {}>'.format(self.name)
+
+    def add_dish(self, dish):
+        if not self.has_dish(dish):
+            self.dishes.append(dish)
+
+    def remove_dish(self, dish):
+        if self.has_dish(dish):
+            self.dishes.remove(dish)
+
+    def has_dish(self, dish):
+        return self.dishes.filter(
+            menus.c.dish_id == dish.id).count() > 0
 
 class Dish(lws_db.Model):
 
