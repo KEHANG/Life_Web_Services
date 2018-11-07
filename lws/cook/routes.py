@@ -124,6 +124,41 @@ def add_menu():
                             menus=menus.items,
                             next_url=next_url,
                             prev_url=prev_url)
+
+@bp.route('/edit_menu/<menu_id>', methods=['GET', 'POST'])
+@login_required
+def edit_menu(menu_id):
+    menu = Menu.query.get(menu_id)
+    if menu is None:
+        flash('Menu {} not found.'.format(menu_id))
+        return redirect(url_for('cook.add_menu'))
+
+    form = MenuForm(original_menu_name=menu.name)
+    if form.validate_on_submit():
+        if form.add_entry.data:
+            form.dishes.append_entry()
+
+        elif form.submit.data:
+            for dish_name in form.dishes.data:
+                dish = Dish.query.filter_by(name=dish_name).first()
+                if dish is None:
+                    dish = Dish(name=dish_name)            
+                    lws_db.session.add(dish)
+                menu.add_dish(dish)
+
+            lws_db.session.commit()
+            flash('New menu is modified.')
+            return redirect(url_for('cook.add_menu'))
+    elif request.method == 'GET':
+        form.menu_name.data = menu.name
+        form.dishes.pop_entry()
+        for dish in menu.dishes:
+            form.dishes.append_entry(dish.name)
+
+    return render_template('cook/edit_menu.html', 
+                           title='Edit Menu', 
+                           form=form)
+
 @bp.route('/ingredients')
 @login_required
 def ingredients():
