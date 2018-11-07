@@ -3,9 +3,9 @@ from flask_login import login_required
 from flask import flash, redirect, url_for, render_template, request
 
 from lws import lws_db
-from lws.models import Dish, Ingredient
+from lws.models import Menu, Dish, Ingredient
 from lws.cook import bp
-from lws.cook.forms import DishForm, IngredientForm
+from lws.cook.forms import MenuForm, DishForm, IngredientForm
 
 @bp.route('/add_ingredient', methods=['GET', 'POST'])
 @login_required
@@ -80,6 +80,50 @@ def add_dish():
                             next_url=next_url,
                             prev_url=prev_url)
 
+@bp.route('/add_menu', methods=['GET', 'POST'])
+@login_required
+def add_menu():
+    page = request.args.get('page', 1, type=int)
+    menus = Menu.query.paginate(page, 25, False)
+
+    next_url = None
+    if menus.has_next:
+        next_url = url_for('cook.add_menu', page=menus.next_num)
+    prev_url = None
+    if menus.has_prev:
+        prev_url = url_for('cook.add_menu', page=menus.prev_num)
+
+    form = MenuForm(original_menu_name='')
+    if form.validate_on_submit():
+        if form.add_entry.data:
+            form.dishes.append_entry()
+            return render_template('cook/add_menu.html', 
+                                    title='Menu', 
+                                    form=form,
+                                    menus=menus.items,
+                                    next_url=next_url,
+                                    prev_url=prev_url)
+        elif form.submit.data:
+            menu = Menu(name=form.menu_name.data)            
+            lws_db.session.add(menu)
+
+            for dish_name in form.dishes.data:
+                dish = Dish.query.filter_by(name=dish_name).first()
+                if dish is None:
+                    dish = Dish(name=dish_name)            
+                    lws_db.session.add(dish)
+                menu.add_dish(dish)
+
+            lws_db.session.commit()
+            flash('New menu is added.')
+            return redirect(url_for('cook.add_menu'))
+
+    return render_template('cook/add_menu.html', 
+                            title='Menu', 
+                            form=form,
+                            menus=menus.items,
+                            next_url=next_url,
+                            prev_url=prev_url)
 @bp.route('/ingredients')
 @login_required
 def ingredients():
@@ -93,5 +137,12 @@ def dishes():
     dishes = Dish.query.all()
     dish_names = [i.name for i in dishes]
     return jsonify(dish_names)
+
+@bp.route('/menus')
+@login_required
+def menus():
+    menus = Menu.query.all()
+    menu_names = [i.name for i in menus]
+    return jsonify(menu_names)
 
 

@@ -1,0 +1,53 @@
+{% extends "cook/cook_base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Add a menu</h1>
+    <form class="form form-horizontal" method="post" role="form">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_errors(form, hiddens="only") }}
+
+        {{ wtf.form_field(form.menu_name) }}
+        {% for dish in form.dishes %}
+            {{ wtf.form_field(dish) }}
+        {% endfor %}
+        {{ wtf.form_field(form.add_entry) }}
+        {{ wtf.form_field(form.submit) }}
+    </form>
+    <br>
+    {% for menu in menus %}
+    	{% include 'cook/_menu.html' %}    
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Newer menus
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Older menus <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(document).ready(function(){
+        dishes_api_endpoint = "{{ url_for('cook.dishes') }}";
+        menus_api_endpoint = "{{ url_for('cook.menus') }}";
+
+        $("input[id^='dishes-']").autocomplete({
+            source: load_items(dishes_api_endpoint),
+            });
+        $("input[id='menu_name']" ).autocomplete({
+            source: load_items(menus_api_endpoint), 
+            });
+        });
+
+    </script>
+{% endblock %}
