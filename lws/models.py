@@ -146,6 +146,7 @@ class Post(SearchableMixin, lws_db.Model):
 class Menu(lws_db.Model):
 
     id = lws_db.Column(lws_db.Integer, primary_key=True)
+    name = lws_db.Column(lws_db.String(140))
     timestamp = lws_db.Column(lws_db.DateTime, index=True, default=datetime.utcnow)
     confirmed = lws_db.Column(lws_db.Boolean, default=False)
     dishes = lws_db.relationship('Dish', secondary=menus, lazy='dynamic',
