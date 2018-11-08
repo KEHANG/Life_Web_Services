@@ -52,12 +52,6 @@ def add_dish():
     if form.validate_on_submit():
         if form.add_entry.data:
             form.ingredients.append_entry()
-            return render_template('cook/add_dish.html', 
-                                    title='Dish', 
-                                    form=form,
-                                    dishes=dishes.items,
-                                    next_url=next_url,
-                                    prev_url=prev_url)
         elif form.pop_entry.data:
             form.ingredients.pop_entry()
         elif form.submit.data:
