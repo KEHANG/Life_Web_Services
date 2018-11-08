@@ -99,16 +99,12 @@ def add_menu():
             form.dishes.append_entry()
         elif form.pop_entry.data:
             form.dishes.pop_entry()
-            return render_template('cook/add_menu.html', 
-                                    title='Menu', 
-                                    form=form,
-                                    menus=menus.items,
-                                    next_url=next_url,
-                                    prev_url=prev_url)
         elif form.submit.data:
             menu = Menu(name=form.menu_name.data)            
             lws_db.session.add(menu)
 
+            # add dishes that are not included in
+            # dish table or menus table
             for dish_name in form.dishes.data:
                 dish = Dish.query.filter_by(name=dish_name).first()
                 if dish is None:
@@ -142,6 +138,8 @@ def edit_menu(menu_id):
         elif form.pop_entry.data:
             form.dishes.pop_entry()
         elif form.submit.data:
+            # add dishes that are not included in
+            # dish table or menus table
             for dish_name in form.dishes.data:
                 dish = Dish.query.filter_by(name=dish_name).first()
                 if dish is None:
