@@ -97,6 +97,8 @@ def add_menu():
     if form.validate_on_submit():
         if form.add_entry.data:
             form.dishes.append_entry()
+        elif form.pop_entry.data:
+            form.dishes.pop_entry()
             return render_template('cook/add_menu.html', 
                                     title='Menu', 
                                     form=form,
@@ -137,7 +139,8 @@ def edit_menu(menu_id):
     if form.validate_on_submit():
         if form.add_entry.data:
             form.dishes.append_entry()
-
+        elif form.pop_entry.data:
+            form.dishes.pop_entry()
         elif form.submit.data:
             for dish_name in form.dishes.data:
                 dish = Dish.query.filter_by(name=dish_name).first()
@@ -145,6 +148,14 @@ def edit_menu(menu_id):
                     dish = Dish(name=dish_name)            
                     lws_db.session.add(dish)
                 menu.add_dish(dish)
+
+            # remove dishes that are removed via the form
+            dishes_to_rm = []
+            for dish in menu.dishes:
+                if dish.name not in form.dishes.data:
+                    dishes_to_rm.append(dish)
+            for dish in dishes_to_rm:
+                menu.remove_dish(dish)
 
             lws_db.session.commit()
             flash('New menu is modified.')

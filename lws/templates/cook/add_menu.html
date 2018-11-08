@@ -11,6 +11,7 @@
         {% for dish in form.dishes %}
             {{ wtf.form_field(dish) }}
         {% endfor %}
+        {{ wtf.form_field(form.pop_entry) }}
         {{ wtf.form_field(form.add_entry) }}
         {{ wtf.form_field(form.submit) }}
     </form>

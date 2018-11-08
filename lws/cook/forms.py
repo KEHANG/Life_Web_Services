@@ -28,6 +28,7 @@ class MenuForm(FlaskForm):
     menu_name = StringField('Menu', validators=[DataRequired()])
     dishes = FieldList(StringField('Dish', validators=[DataRequired()]), min_entries=1)
     add_entry = SubmitField('One more dish')
+    pop_entry = SubmitField('remove last dish')
     submit = SubmitField('Submit')
 
     def __init__(self, original_menu_name, *args, **kwargs):
