@@ -58,6 +58,8 @@ def add_dish():
                                     dishes=dishes.items,
                                     next_url=next_url,
                                     prev_url=prev_url)
+        elif form.pop_entry.data:
+            form.ingredients.pop_entry()
         elif form.submit.data:
             dish = Dish(name=form.dish_name.data)            
             lws_db.session.add(dish)

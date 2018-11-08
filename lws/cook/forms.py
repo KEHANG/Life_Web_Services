@@ -17,6 +17,7 @@ class DishForm(FlaskForm):
     dish_name = StringField('Dish', validators=[DataRequired()])
     ingredients = FieldList(StringField('Ingredient', validators=[DataRequired()]), min_entries=1)
     add_entry = SubmitField('One more ingredient')
+    pop_entry = SubmitField('remove last ingredient')
     submit = SubmitField('Submit')
 
     def validate_dish_name(self, dish_name):
