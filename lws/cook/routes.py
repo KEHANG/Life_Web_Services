@@ -164,6 +164,21 @@ def edit_menu(menu_id):
                            title='Edit Menu', 
                            form=form)
 
+@bp.route('/summarize_menu/<menu_id>')
+@login_required
+def summarize_menu(menu_id):
+
+    menu = Menu.query.get(menu_id)
+    if menu is None:
+        flash('Menu {} not found.'.format(menu_id))
+        return redirect(url_for('cook.add_menu'))
+
+    ingredients = menu.get_ingredients()
+    return render_template('cook/view_menu.html', 
+                           title='Menu Summary',
+                           menu=menu,
+                           ingredients=ingredients)
+
 @bp.route('/ingredients')
 @login_required
 def ingredients():

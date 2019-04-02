@@ -1,8 +1,16 @@
 <table class="table table-hover">
     <tr>
-        <td>
-        	<a href="{{url_for('cook.edit_menu', menu_id=menu.id)}}">
+        <td class="col-md-4">
         	{{menu.name}}
+        </td>
+        <td class="col-md-4">
+        	<a href="{{url_for('cook.edit_menu', menu_id=menu.id)}}">
+        	Edit
+        	</a><a href="{{url_for('cook.summarize_menu', menu_id=menu.id)}}">
+        </td>
+        <td class="col-md-4">
+        	<a href="{{url_for('cook.summarize_menu', menu_id=menu.id)}}">
+        	Summary
         	</a>
         </td>
     </tr>

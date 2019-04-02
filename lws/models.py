@@ -167,6 +167,16 @@ class Menu(lws_db.Model):
         return self.dishes.filter(
             menus.c.dish_id == dish.id).count() > 0
 
+    def get_ingredients(self):
+
+        ingredients = []
+        for dish in self.dishes:
+            for ingredient in dish.ingredients:
+                if ingredient not in ingredients:
+                    ingredients.append(ingredient)
+
+        return ingredients
+
 class Dish(lws_db.Model):
 
     id = lws_db.Column(lws_db.Integer, primary_key=True)
