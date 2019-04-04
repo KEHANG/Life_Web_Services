@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>LightCom</h1>
+    <a class="btn btn-success btn-lg" href="{{ url_for('lightcom.at_home') }}" role="button">I'm Home</a>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('lightcom.on_the_way') }}" role="button">On the way</a>
+    <a class="btn btn-danger btn-lg" href="{{ url_for('lightcom.at_work') }}" role="button">I'm at work</a>
+{% endblock %}

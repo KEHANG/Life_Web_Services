@@ -45,11 +45,13 @@ def create_app(config_class=Config):
     from lws.errors import bp as errors_bp
     from lws.auth import bp as auth_bp
     from lws.cook import bp as cook_bp
+    from lws.lightcom import bp as lightcom_bp
 
     lws_app.register_blueprint(main_bp)
     lws_app.register_blueprint(errors_bp)
     lws_app.register_blueprint(auth_bp, url_prefix='/auth')
     lws_app.register_blueprint(cook_bp, url_prefix='/cook')
+    lws_app.register_blueprint(lightcom_bp, url_prefix='/lightcom')
 
     if not lws_app.debug and not lws_app.testing:
         if lws_app.config['MAIL_SERVER']:
