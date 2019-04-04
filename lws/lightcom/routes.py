@@ -20,6 +20,7 @@ def at_home():
     for consumer in consumers:
         publish_msg('turn_on_green', 'MQ_{0}'.format(consumer))
         publish_msg('turn_off_red', 'MQ_{0}'.format(consumer))
+        publish_msg('turn_off_blue', 'MQ_{0}'.format(consumer))
     flash('At-Home Message is published.')
     return redirect(url_for('lightcom.main'))
 
@@ -29,6 +30,7 @@ def at_work():
     for consumer in consumers:
         publish_msg('turn_on_red', 'MQ_{0}'.format(consumer))
         publish_msg('turn_off_green', 'MQ_{0}'.format(consumer))
+        publish_msg('turn_off_blue', 'MQ_{0}'.format(consumer))
     flash('At-Work Message is published.')
     return redirect(url_for('lightcom.main'))
 
