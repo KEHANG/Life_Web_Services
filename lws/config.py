@@ -24,3 +24,5 @@ class Config(object):
     MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
 
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+
+    STOCK_DB_CONNECTION_STR = os.environ.get('STOCK_DB_CONNECTION_STR')
