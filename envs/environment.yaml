@@ -18,6 +18,7 @@ dependencies:
   - gunicorn
   - pymysql
   - pyjwt
+  - pymongo
   - nose
   - requests
   - pip:
