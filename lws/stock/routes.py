@@ -11,17 +11,8 @@ def connect_to_record_db():
     
     return MongoClient(db_connection_str)
 
-@bp.route('/<stock_id>', methods=['GET'])
-@login_required
-def view_stats(stock_id):
+def query_stats(stock_id):
 
-  return render_template('stock/stock_base.html', 
-                         title='Stock')
-
-
-@bp.route('/latest_stats/<stock_id>', methods=['GET'])
-@login_required
-def latest_stats(stock_id):
     db_client = MongoClient(current_app.config['STOCK_DB_CONNECTION_STR'])
     db = db_client.lws
     collection = db.stock
@@ -38,10 +29,26 @@ def latest_stats(stock_id):
             result.pop('_id', None)
             results.append(result)
         
-        return jsonify(results)
+        return results
     else:
         query = {'stock': stock_id.upper()}
         result = collection.find_one(query, sort=[("updated_utctime", 
                                                    pymongo.DESCENDING)])
         result.pop('_id', None)
-        return jsonify(result)
+        return result
+
+@bp.route('/<stock_id>', methods=['GET'])
+@login_required
+def view_stats(stock_id):
+
+    stats = query_stats(stock_id)
+    return render_template('stock/stock_base.html',
+                           title='Stock',
+                           stats=stats)
+
+
+@bp.route('/print_stats/<stock_id>', methods=['GET'])
+@login_required
+def print_stats(stock_id):
+    stats = query_stats(stock_id)
+    return jsonify(stats)
