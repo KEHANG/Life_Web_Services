@@ -2,7 +2,7 @@ import os
 import pymongo
 from pymongo import MongoClient
 from flask_login import login_required
-from flask import current_app, jsonify
+from flask import current_app, jsonify, render_template
 
 from lws.stock import bp
 
@@ -10,6 +10,14 @@ def connect_to_record_db():
     db_connection_str = os.environ.get('DB_CONNECTION_STR')
     
     return MongoClient(db_connection_str)
+
+@bp.route('/<stock_id>', methods=['GET'])
+@login_required
+def view_stats(stock_id):
+
+  return render_template('stock/stock_base.html', 
+                         title='Stock')
+
 
 @bp.route('/latest_stats/<stock_id>', methods=['GET'])
 @login_required
