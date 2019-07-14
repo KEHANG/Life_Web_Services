@@ -3,39 +3,39 @@
 
 {% block app_content %}
 <p>
-Inline Sparkline: <span class="inlinesparkline">1,4,4,7,5,9,10</span>.
+Quarterly ROIs (past month): 
+<span class="dynamicsparkline" 
+	id="month_roi_jps">Loading</span>
+</p>
+
+<p>
+Quarterly ROIs (past week): 
+<span class="dynamicsparkline" 
+	id="week_roi_jps">Loading</span>
 </p>
 <p>
-Sparkline with dynamic data: <span class="dynamicsparkline">Loading..</span>
+Prices (past month): 
+<span class="dynamicsparkline" 
+	id="month_price_jps">Loading</span>
 </p>
+
 <p>
-Bar chart with dynamic data: <span class="dynamicbar">Loading..</span>
+Prices (past week): 
+<span class="dynamicsparkline" 
+	id="week_price_jps">Loading</span>
 </p>
-<p>
-Bar chart with inline data: <span class="inlinebar">1,3,4,5,3,5</span>
-</p>
+
+
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename='jquery.sparkline.js') }}" ></script>
+    <script src="{{ url_for('static', filename='lws.js') }}" ></script>
     <script type="text/javascript">
-    $(function() {
-        /** This code runs when everything has been loaded on the page */
-        /* Inline sparklines take their values from the contents of the tag */
-        $('.inlinesparkline').sparkline(); 
-
-        /* Sparklines can also take their values from the first argument 
-        passed to the sparkline() function */
-        var myvalues = [10,8,5,7,4,4,1];
-        $('.dynamicsparkline').sparkline(myvalues);
-
-        /* The second argument gives options such as chart type */
-        $('.dynamicbar').sparkline(myvalues, {type: 'bar', barColor: 'green'} );
-
-        /* Use 'html' instead of an array of values to pass options 
-        to a sparkline with data in the tag */
-        $('.inlinebar').sparkline('html', {type: 'bar', barColor: 'red'} );
-    });
+    setup_charts('month_roi_jps', {{stats['last_30day_3monthROIs']|tojson}}, {{stats['long_term_3monthROI']}});
+    setup_charts('week_roi_jps', {{stats['last_5day_3monthROIs']|tojson}}, {{stats['long_term_3monthROI']}});
+    setup_charts('month_price_jps', {{stats['last_30day_prices']|tojson}}, 0);
+    setup_charts('week_price_jps', {{stats['last_5day_prices']|tojson}}, 0);
     </script>
 {% endblock %}
