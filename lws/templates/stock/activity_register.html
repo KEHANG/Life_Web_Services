@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Stock Activity Register</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <form class="form form-horizontal" method="post" role="form">
+              {{ form.hidden_tag() }}
+              {{ wtf.form_errors(form, hiddens="only") }}
+
+              {{ wtf.form_field(form.stock_name) }}
+              {{ wtf.form_field(form.action) }}
+              {{ wtf.form_field(form.shares) }}
+              {{ wtf.form_field(form.price) }}
+              {{ wtf.form_field(form.date, type='date') }}
+              {{ wtf.form_field(form.submit) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
