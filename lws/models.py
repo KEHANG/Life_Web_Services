@@ -207,6 +207,17 @@ class Ingredient(lws_db.Model):
     def __repr__(self):
         return '<Ingredient {}>'.format(self.name)
 
+class StockShare(lws_db.Model):
+    id = lws_db.Column(lws_db.Integer, primary_key=True)
+    name = lws_db.Column(lws_db.String(10))
+    buy_price = lws_db.Column(lws_db.Float)
+    sell_price = lws_db.Column(lws_db.Float)
+    buy_timestamp = lws_db.Column(lws_db.DateTime, index=True)
+    sell_timestamp = lws_db.Column(lws_db.DateTime)
+
+    def __repr__(self):
+        return '<StockShare id={0}, {1}>'.format(self.id, self.name)
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
