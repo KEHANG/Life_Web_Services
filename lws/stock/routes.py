@@ -68,15 +68,28 @@ def activity_register():
                              buy_price=form.price.data,
                              buy_timestamp=form.date.data)
           lws_db.session.add(share)
+        lws_db.session.commit()
+        flash("Congratulations, you've registered {0} shares of {1}!".format(
+              form.shares.data, form.stock_name.data))
+      
       elif form.action.data == 'sell':
-        for _ in range(form.shares.data):
-          share = StockShare(name=form.stock_name.data,
-                             sell_price=form.price.data,
-                             sell_timestamp=form.date.data)
-          lws_db.session.add(share)
-
-      lws_db.session.commit()
-      flash("Congratulations, you've registered {0} shares of {1}!".format(
-            form.shares.data, form.stock_name.data))
+        shares_held = StockShare.query.filter_by(
+                              name=form.stock_name.data,
+                              sell_price=None
+                              ).count()
+        if form.shares.data > shares_held:
+          flash("Error, only held {0} shares of {1} but you're selling {2}!".format(
+              shares_held, form.stock_name.data, form.shares.data))
+        elif form.shares.data > 0:
+          shares_to_sell = StockShare.query.filter_by(
+                              name=form.stock_name.data,
+                              sell_price=None
+                              ).order_by(StockShare.buy_timestamp).limit(form.shares.data).all()
+          for share in shares_to_sell:
+            share.sell_price = form.price.data
+            share.sell_timestamp = form.date.data
+          lws_db.session.commit()
+          flash("Congratulations, you've sold {0} shares of {1}!".format(
+              form.shares.data, form.stock_name.data))
       return redirect(url_for('stock.activity_register'))
     return render_template('stock/activity_register.html', title='Stock Activity Register', form=form)
