@@ -1,5 +1,7 @@
 import os
 import pymongo
+from datetime import datetime
+from sqlalchemy import extract
 from pymongo import MongoClient
 from flask_login import login_required
 from flask import (current_app, flash, jsonify,
@@ -93,3 +95,40 @@ def activity_register():
               form.shares.data, form.stock_name.data))
       return redirect(url_for('stock.activity_register'))
     return render_template('stock/activity_register.html', title='Stock Activity Register', form=form)
+
+@bp.route('/monthly_view/<int:year>/<int:month>', methods=['GET'])
+@login_required
+def monthly_view(year, month):
+
+  stocks_bought = StockShare.query.filter(
+                      extract('year', StockShare.buy_timestamp) == year
+                    ).filter(
+                        extract('month', StockShare.buy_timestamp) == month
+                      ).all()
+
+  invest_amount = 0
+  exit_amount = 0
+  stayed_amount = 0
+  latest_price_dict = {}
+  for stock in stocks_bought:
+    invest_amount += stock.buy_price
+    if stock.sell_price:
+      exit_amount += stock.sell_price
+    else:
+      if stock.name not in latest_price_dict:
+        stock_info = query_stats(stock.name)
+        latest_price = stock_info['last_5day_prices'][-1]
+        latest_price_dict[stock.name] = latest_price
+      else:
+        latest_price = latest_price_dict[stock.name]
+      stayed_amount += latest_price
+
+  # calculate return of investment
+  now = datetime.utcnow()
+  month_diff = 12 * (now.year - year) + (now.month - month)
+  if month_diff == 0 or invest_amount == 0:
+    roi = 'NA'
+    return jsonify([invest_amount, exit_amount, stayed_amount, 'NA', 'NA'])
+  else:
+    roi = (((stayed_amount + exit_amount) / invest_amount)**(12.0/month_diff) - 1)
+    return jsonify([invest_amount, exit_amount, stayed_amount, '{0}%'.format(roi*100), invest_amount*roi])
