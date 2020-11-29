@@ -17,7 +17,7 @@ def connect_to_record_db():
     
     return MongoClient(db_connection_str)
 
-def query_stats(stock_id):
+def query_price_stats(stock_id):
 
     db_client = MongoClient(current_app.config['STOCK_DB_CONNECTION_STR'])
     db = db_client.lws
@@ -47,7 +47,7 @@ def query_stats(stock_id):
 @login_required
 def view_stats(stock_id):
 
-    stats = query_stats(stock_id)
+    stats = query_price_stats(stock_id)
     return render_template('stock/stock_base.html',
                            title='Stock',
                            stats=stats)
@@ -56,7 +56,7 @@ def view_stats(stock_id):
 @bp.route('/print_stats/<stock_id>', methods=['GET'])
 @login_required
 def print_stats(stock_id):
-    stats = query_stats(stock_id)
+    stats = query_price_stats(stock_id)
     return jsonify(stats)
 
 @bp.route('/activity_register', methods=['GET', 'POST'])
@@ -116,7 +116,7 @@ def monthly_view(year, month):
       exit_amount += stock.sell_price
     else:
       if stock.name not in latest_price_dict:
-        stock_info = query_stats(stock.name)
+        stock_info = query_price_stats(stock.name)
         latest_price = stock_info['last_5day_prices'][-1]
         latest_price_dict[stock.name] = latest_price
       else:
