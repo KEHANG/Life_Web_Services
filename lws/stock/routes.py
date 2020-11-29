@@ -132,3 +132,17 @@ def monthly_view(year, month):
   else:
     roi = (((stayed_amount + exit_amount) / invest_amount)**(12.0/month_diff) - 1)
     return jsonify([invest_amount, exit_amount, stayed_amount, '{0}%'.format(roi*100), invest_amount*roi])
+
+@bp.route('/holding_view', methods=['GET'])
+@login_required
+def holding_view():
+
+    stocks_held = StockShare.query.filter_by(sell_price=None).all()
+    holding_dict = {}
+    for stock in stocks_held:
+      if stock.name not in holding_dict:
+        holding_dict[stock.name] = 1
+      else:
+        holding_dict[stock.name] += 1
+
+    return jsonify(holding_dict)
