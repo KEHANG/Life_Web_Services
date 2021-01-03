@@ -132,8 +132,15 @@ def monthly_view(year, month):
   exit_amount = 0
   stayed_amount = 0
   latest_price_dict = {}
+  stock_bought_overview = {}
   for stock in stocks_bought:
     invest_amount += stock.buy_price
+    if stock.name not in stock_bought_overview:
+      stock_bought_overview[stock.name] = 1
+    else:
+      stock_bought_overview[stock.name] += 1
+    # we also sold this stock share already
+    # between that month and now
     if stock.sell_price:
       exit_amount += stock.sell_price
     else:
@@ -148,12 +155,20 @@ def monthly_view(year, month):
   # calculate return of investment
   now = datetime.utcnow()
   month_diff = 12 * (now.year - year) + (now.month - month)
+  money_overview = {
+          'invest_amount': invest_amount,
+          'exit_amount': exit_amount,
+          'stayed_amount': stayed_amount}
   if month_diff == 0 or invest_amount == 0:
-    roi = 'NA'
-    return jsonify([invest_amount, exit_amount, stayed_amount, 'NA', 'NA'])
+    money_overview['yearly_roi'] = 'NA'
+    money_overview['yearly_gain'] = 'NA'
   else:
-    roi = (((stayed_amount + exit_amount) / invest_amount)**(12.0/month_diff) - 1)
-    return jsonify([invest_amount, exit_amount, stayed_amount, '{0}%'.format(roi*100), invest_amount*roi])
+    yearly_roi = (((stayed_amount + exit_amount) / invest_amount)**(12.0/month_diff) - 1)
+    money_overview['yearly_roi'] = '{0}%'.format(yearly_roi * 100)
+    money_overview['yearly_gain'] = invest_amount * yearly_roi
+  
+  return jsonify({'money_overview': money_overview,
+                  'stock_bought_overview': stock_bought_overview})
 
 @bp.route('/holding_view', methods=['GET'])
 @login_required
