@@ -3,7 +3,7 @@ local_es:
 	@elasticsearch -d
 
 local_run:
-	./launch_sv.sh
+	./launch_lcoal.sh
 
 unittests:
 	@echo "Unittesting Life_Web_Service..."
