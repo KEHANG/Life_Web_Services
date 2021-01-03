@@ -93,6 +93,28 @@ def activity_register():
           lws_db.session.commit()
           flash("Congratulations, you've sold {0} shares of {1}!".format(
               form.shares.data, form.stock_name.data))
+      elif form.action.data == 'split':
+        shares_to_split = StockShare.query.filter_by(
+                            name=form.stock_name.data,
+                            sell_price=None
+                            ).order_by(StockShare.buy_timestamp).all()
+        num_shares_split = 0
+        for share in shares_to_split:
+          if share.buy_timestamp >= datetime.combine(form.date.data, datetime.min.time()):
+            break
+          share.sell_price = form.price.data
+          share.sell_timestamp = form.date.data
+          num_shares_split += 1
+
+        for _ in range(num_shares_split*form.split_ratio.data):
+          share = StockShare(name=form.stock_name.data,
+                             buy_price=form.price.data/form.split_ratio.data,
+                             buy_timestamp=form.date.data)
+          lws_db.session.add(share)
+        lws_db.session.commit()
+        flash("Congratulations, you've splitted {0} shares of {1} with split ratio {2}!".format(
+              form.shares.data, form.stock_name.data, form.split_ratio.data))
+
       return redirect(url_for('stock.activity_register'))
     return render_template('stock/activity_register.html', title='Stock Activity Register', form=form)
 
